@@ -2,6 +2,7 @@ import { http } from "@/utils/https"
 import type { BannerItem, CategoryItem, HotItem, GuessItem } from "@/types/home"
 import type { PageResult,PageParams } from "@/types/global"
 
+//首页轮播图
 export const getHomeBannerAPI = (distributionSite = 1) => {
     return http<BannerItem[]>({
         method: "GET",
