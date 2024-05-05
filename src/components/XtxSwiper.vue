@@ -9,7 +9,7 @@ const getIndex: UniHelper.SwiperOnChange = (e) => {
 }
 
 const props = defineProps<{
-  list: BannerItem
+  list: BannerItem[]
 }>()
 </script>
 
