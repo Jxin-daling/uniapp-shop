@@ -38,14 +38,23 @@ onLoad(() => {
 
 <template>
   <CustomNavbar />
-  <XtxSwiper :list="BannerList" />
-  <CategoryPanel :list="CategoryList" />
-  <HotPanel :list="HotList" />
-  <XtxGuess />
+  <scroll-view class="scroll-view" scroll-y>
+    <XtxSwiper :list="BannerList" />
+    <CategoryPanel :list="CategoryList" />
+    <HotPanel :list="HotList" />
+    <XtxGuess />
+  </scroll-view>
 </template>
 
 <style lang="scss">
 page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   background-color: #f7f7f7;
+
+  .scroll-view {
+    flex: 1;
+  }
 }
 </style>
