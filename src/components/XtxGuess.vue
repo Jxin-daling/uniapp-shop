@@ -35,12 +35,20 @@ const getHomeGuessLikeData = async () => {
   }
 }
 
+//重置操作
+const resetData = ()=>{
+  PageParams.page = 1,
+  GuesslLikeList.value = []
+  finish.value = false
+}
+
 onLoad(() => {
   getHomeGuessLikeData()
 })
 
 defineExpose({
   getMore: getHomeGuessLikeData,
+  resetData
 })
 </script>
 
