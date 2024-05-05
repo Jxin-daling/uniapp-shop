@@ -1,5 +1,6 @@
 import { http } from "@/utils/https"
-import type { BannerItem, CategoryItem, HotItem } from "@/types/home"
+import type { BannerItem, CategoryItem, HotItem, GuessItem } from "@/types/home"
+import type { PageResult,PageParams } from "@/types/global"
 
 export const getHomeBannerAPI = (distributionSite = 1) => {
     return http<BannerItem[]>({
@@ -28,12 +29,10 @@ export const getHomeHotAPI = () => {
 }
 
 //首页猜你喜欢接口
-export const getHomeGuessLikeAPI = (page = 1, pageSize = 10) => {
-    return http({
+export const getHomeGuessLikeAPI = (data?: PageParams) => {
+    return http<PageResult<GuessItem[]>>({
         method: "GET",
         url: '/home/goods/guessLike',
-        data: {
-            page, pageSize
-        }
+        data
     })
 }

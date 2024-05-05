@@ -1,8 +1,47 @@
 <script setup lang="ts">
-//
-const props = defineProps<{
-  list: any
-}>()
+import type { GuessItem } from '@/types/home'
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { getHomeGuessLikeAPI } from '@/services/home'
+import type { PageParams } from '@/types/global'
+
+//数据list
+const GuesslLikeList = ref<GuessItem[]>([])
+
+//分页参数
+const PageParams: Required<PageParams> = {
+  page: 1,
+  pageSize: 10,
+}
+
+//结束标记
+const finish = ref(false)
+//获取猜你喜欢数据
+const getHomeGuessLikeData = async () => {
+  if (finish.value) {
+    return uni.showToast({
+      title: '没有更多数据',
+      icon: 'none',
+    })
+  }
+  const res = await getHomeGuessLikeAPI(PageParams)
+  GuesslLikeList.value = res.result.items
+  GuesslLikeList.value.push(...res.result.items)
+  //页码累加
+  if (PageParams.page < res.result.pages) {
+    PageParams.page++
+  } else {
+    finish.value = true
+  }
+}
+
+onLoad(() => {
+  getHomeGuessLikeData()
+})
+
+defineExpose({
+  getMore: getHomeGuessLikeData,
+})
 </script>
 
 <template>
@@ -13,7 +52,7 @@ const props = defineProps<{
   <view class="guess">
     <navigator
       class="guess-item"
-      v-for="item in list"
+      v-for="item in GuesslLikeList"
       :key="item"
       :url="`/pages/goods/goods?id=4007498`"
     >
@@ -25,7 +64,8 @@ const props = defineProps<{
       </view>
     </navigator>
   </view>
-  <view class="loading-text"> 正在加载... </view>
+  <view class="loading-text" v-if="finish"> 没有更多数据 </view>
+  <view class="loading-text" v-else> 正在加载... </view>
 </template>
 
 <style lang="scss">
