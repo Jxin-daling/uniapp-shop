@@ -3,7 +3,6 @@ import type { HotItem } from '@/types/home'
 const props = defineProps<{
   list: HotItem[]
 }>()
-console.log(props)
 </script>
 
 <template>
