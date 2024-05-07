@@ -83,7 +83,7 @@
 				"text": "我的",
 				"pagePath": "pages/my/my",
 				"iconPath": "static/tabs/user_default.png",
-				"selectedIconPath": "static/tabs/user_selected.png",
+				"selectedIconPath": "static/tabs/user_selected.png"
 			}
 		]
 	},
@@ -92,6 +92,27 @@
 		"custom": {
 			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue",
 			"^Xtx(.*)": "@/components/Xtx$1.vue"
+		}
+	},
+	"subPackages": [
+		{
+			"root": "pagesMember",
+			"pages": [
+				{
+					"path": "settings/settings",
+					"style": {
+						"navigationBarTitleText": "设置"
+					}
+				}
+			]
+		}
+	],
+	"preloadRule": {
+		"pages/my/my": {
+			"network": "all",
+			"packages": [
+				"pagesMember"
+			]
 		}
 	}
 }
