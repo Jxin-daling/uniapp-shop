@@ -13,11 +13,11 @@ import {
 } from '@/services/home'
 import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
 import type { XtxGuessInstance } from '@/components/components'
+import {useGuessList} from '@/composables/index'
 
 const BannerList = ref<BannerItem[]>([])
 const CategoryList = ref<CategoryItem[]>([])
 const HotList = ref<HotItem[]>([])
-const guessRef = ref<XtxGuessInstance>()
 
 //是否触发下拉刷新
 const isTrggered = ref(false)
@@ -43,10 +43,8 @@ const geHomeHotData = async () => {
   HotList.value = res.result
 }
 
-//滚动触底
-const onScrolltolower = () => {
-  guessRef.value.getMore()
-}
+const { guessRef, onScrolltolower } = useGuessList()
+
 
 //自定义下拉刷新被触发
 const onRefresherRefresh = async () => {
