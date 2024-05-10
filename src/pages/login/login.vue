@@ -29,7 +29,7 @@ const onGetPhoneNumbersimple = async () => {
     icon: 'success',
   })
   setTimeout(() => {
-    uni.switchTab({ url: '/pages/my/my' })
+    uni.navigateBack()
   }, 500)
 }
 </script>
