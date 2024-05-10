@@ -6,6 +6,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
+import type { SkuPopupLocaldata } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -18,6 +19,30 @@ const goods = ref<GoodsResult>()
 const getGoodsByIdData = async () => {
   const res = await getGoodsByIdAPI(query.id)
   goods.value = res.result
+
+  //SKU组件所需数据格式
+  localdata.value = {
+    _id: res.result.id,
+    name: res.result.name,
+    goods_thumb: res.result.mainPictures[0],
+    spec_list: res.result.specs.map((v) => {
+      return {
+        name: v.name,
+        list: v.values,
+      }
+    }),
+    sku_list: res.result.skus.map((v) => {
+      return {
+        _id: v.id,
+        goods_id: res.result.id,
+        goods_name: res.result.name,
+        image: v.picture,
+        price: v.price * 100,
+        stock: v.inventory,
+        sku_name_arr: v.specs.map((vv) => vv.valueName),
+      }
+    }),
+  }
 }
 
 //轮播图交互
@@ -47,12 +72,38 @@ const openPopup = (name: typeof popupName.value) => {
   popup.value?.open()
 }
 
+//是否显示sku组件
+const isShowSku = ref(false)
+
+//按钮的模式
+enum SkuMode {
+  Both = 1,
+  Cart = 2,
+  Buy = 3,
+}
+const mode = ref<SkuMode>(SkuMode.Both)
+
+//打开SKU弹窗模式
+const openSkuPopup = (val: SkuMode) => {
+  isShowSku.value = true
+  mode.value = val
+}
+//商品信息
+const localdata = ref({} as SkuPopupLocaldata)
+
 onLoad(() => {
   getGoodsByIdData()
 })
 </script>
 
 <template>
+  <vk-data-goods-sku-popup
+    v-model="isShowSku"
+    :localdata="localdata"
+    :mode="mode"
+    add-cart-background-color="#FFA868"
+    buy-now-background-color="#27BA9B"
+  ></vk-data-goods-sku-popup>
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
     <view class="goods">
@@ -82,7 +133,7 @@ onLoad(() => {
 
       <!-- 操作面板 -->
       <view class="action">
-        <view class="item arrow">
+        <view class="item arrow" @tap="openSkuPopup(SkuMode.Both)">
           <text class="label">选择</text>
           <text class="text ellipsis"> 请选择商品规格 </text>
         </view>
@@ -156,8 +207,8 @@ onLoad(() => {
       </navigator>
     </view>
     <view class="buttons">
-      <view class="addcart"> 加入购物车 </view>
-      <view class="buynow"> 立即购买 </view>
+      <view class="addcart" @tap="openSkuPopup(SkuMode.Cart)"> 加入购物车 </view>
+      <view class="buynow" @tap="openSkuPopup(SkuMode.Buy)"> 立即购买 </view>
     </view>
   </view>
 
