@@ -7,9 +7,11 @@ import { computed, ref } from 'vue'
 import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
 import type {
+  SkuPopupEvent,
   SkuPopupInstanceType,
   SkuPopupLocaldata,
 } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
+import { postMemberCartAPI } from '@/services/cart'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -103,6 +105,16 @@ const selectArrText = computed(() => {
   return SkuPopupRef.value?.selectArr?.join(' ').trim() || '请选择商品规格'
 })
 
+//加入购物车
+const onAddCart = async (e: SkuPopupEvent) => {
+  await postMemberCartAPI({ skuId: e._id, count: e.buy_num })
+  uni.showToast({
+    title: '添加成功',
+    icon: 'success',
+  })
+  isShowSku.value = false
+}
+
 onLoad(() => {
   getGoodsByIdData()
 })
@@ -121,6 +133,7 @@ onLoad(() => {
       boderColor: '#27BA9B',
       background: '#E9F8F5',
     }"
+    @add-cart="onAddCart"
   ></vk-data-goods-sku-popup>
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
