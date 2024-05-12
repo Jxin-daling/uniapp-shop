@@ -91,6 +91,8 @@ const gotoPayment = () => {
   uni.showToast({
     title: '等待完成',
   })
+
+  uni.navigateTo({ url: '/pagesOrder/create/create' })
 }
 
 onShow(() => {
