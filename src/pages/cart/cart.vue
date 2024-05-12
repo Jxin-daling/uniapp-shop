@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
-import { deleteMemberCartAPI, getMemberCartAPI, putMemberCartBySkuIdAPI } from '@/services/cart'
+import {
+  deleteMemberCartAPI,
+  getMemberCartAPI,
+  putMemberCartBySkuIdAPI,
+  putMemberCartSelectedAPI,
+} from '@/services/cart'
 import { useMemberStore } from '@/stores'
 import type { CartItem } from '@/types/cart'
 
@@ -33,6 +38,29 @@ const onChangeCount = (e: InputNumebrBoxEvent) => {
   putMemberCartBySkuIdAPI(e.index, { count: e.value })
 }
 
+//修改选中状态--单品修改
+const onChangeSelected = (item: CartItem) => {
+  item.selected = !item.selected
+}
+
+//计算全选状态
+const isSelectedAll = computed(() => {
+  return cartList.value.length && cartList.value.every((v) => v.selected)
+})
+
+//修改选中状态--全选修改
+const onChangeSelectedAll = () => {
+  const _isSelectedAll = !isSelectedAll.value
+
+  //前端更新
+  cartList.value.forEach((item) => {
+    item.selected = _isSelectedAll
+  })
+
+  //后端更新
+  putMemberCartSelectedAPI({ selected: _isSelectedAll })
+}
+
 onShow(() => {
   if (memberStore.profile) {
     getMemberCartData()
@@ -58,7 +86,11 @@ onShow(() => {
             <!-- 商品信息 -->
             <view class="goods">
               <!-- 选中状态 -->
-              <text class="checkbox" :class="{ checked: item.selected }"></text>
+              <text
+                class="checkbox"
+                @tap="onChangeSelected(item)"
+                :class="{ checked: item.selected }"
+              ></text>
               <navigator
                 :url="`/pages/goods/goods?id=${item.id}`"
                 hover-class="none"
@@ -101,7 +133,7 @@ onShow(() => {
       </view>
       <!-- 吸底工具栏 -->
       <view class="toolbar">
-        <text class="all" :class="{ checked: true }">全选</text>
+        <text @tap="onChangeSelectedAll" class="all" :class="{ checked: isSelectedAll }">全选</text>
         <text class="text">合计:</text>
         <text class="amount">100</text>
         <view class="button-grounp">

@@ -38,3 +38,12 @@ export const putMemberCartBySkuIdAPI = (
     data,
   })
 }
+
+//购物车取消/取消全选
+export const putMemberCartSelectedAPI = (data: { selected?: boolean }) => {
+  return http({
+    method: 'PUT',
+    url: `/member/cart/selected`,
+    data,
+  })
+}
