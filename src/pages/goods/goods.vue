@@ -115,6 +115,11 @@ const onAddCart = async (e: SkuPopupEvent) => {
   isShowSku.value = false
 }
 
+//立即购买跳转事件
+const onBuyNow = async (e: SkuPopupEvent) => {
+  uni.navigateTo({ url: `/pagesOrder/create/create?skuId=${e._id}&count=${e.buy_num}` })
+}
+
 onLoad(() => {
   getGoodsByIdData()
 })
@@ -134,6 +139,7 @@ onLoad(() => {
       background: '#E9F8F5',
     }"
     @add-cart="onAddCart"
+    @buy-now="onBuyNow"
   ></vk-data-goods-sku-popup>
   <scroll-view scroll-y class="viewport">
     <!-- 基本信息 -->
