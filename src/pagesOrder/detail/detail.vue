@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useGuessList } from '@/composables'
+import { onReady } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 
 // 获取屏幕边界到安全区域距离
@@ -28,13 +29,37 @@ const onCopy = (id: string) => {
 const query = defineProps<{
   id: string
 }>()
+
+//获取页面栈
+const pages = getCurrentPages()
+
+//获取当前页面实例数组的最后一项
+const pageInstance = pages.at(-1) as any
+
+onReady(() => {
+  pageInstance.animate(
+    '.navbar',
+    [{ backgroundColor: 'transparent' }, { backgroundColor: '#f8f8f8' }],
+    1000,
+    {
+      scrollSource: '#scroller', // scroll-view 的选择器
+      startScrollOffset: 0, // 开始滚动偏移量
+      endScrollOffset: 50, // 停止滚动偏移量
+      timeRange: 1000, // 时间长度
+    },
+  )
+})
 </script>
 
 <template>
   <!-- 自定义导航栏: 默认透明不可见, scroll-view 滚动到 50 时展示 -->
   <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
     <view class="wrap">
-      <navigator v-if="true" open-type="navigateBack" class="back icon-left"></navigator>
+      <navigator
+        v-if="pages.length > 1"
+        open-type="navigateBack"
+        class="back icon-left"
+      ></navigator>
       <navigator v-else url="/pages/index/index" open-type="switchTab" class="back icon-home">
       </navigator>
       <view class="title">订单详情</view>
