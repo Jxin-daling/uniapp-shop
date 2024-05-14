@@ -5,6 +5,7 @@ import type { OrderResult } from '@/types/order'
 import { onLoad, onReady } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { OrderState, orderStateList } from '@/types/constants'
+import { getPayMockAPI, getPayWxPayMiniPayAPI } from '@/services/pay'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
@@ -70,7 +71,14 @@ const onTimeUp = () => {
 }
 
 //订单支付
-const onOrderPay = () => {
+const onOrderPay = async () => {
+  //模拟登录
+  if (import.meta.env.DEV) {
+    await getPayMockAPI({ orderId: query.id })
+  } else {
+    const res = getPayWxPayMiniPayAPI({ orderId: query.id })
+    wx.requestPayment(res.result)
+  }
   uni.redirectTo({ url: `/pagesOrder/payment/payment?id=${query.id}` })
 }
 </script>
